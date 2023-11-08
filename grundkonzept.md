@@ -6,8 +6,12 @@ Das Ziel des Projekts ist es, einen sicheren und benutzerfreundlichen Passwort-S
 
 ## Anforderungen
 
-- Passwörte verschüsset speichern
--
+- Passwörter verschlüsselt speichern mit den dazugehörigen Websites, Benutzernamen und jeglichen Bemerkungen.
+- Registrierung und Anmeldung von Benutzern. 
+- Passwortgüte überprüfen.
+- Sicherheit der Passwörter durch Befolgen von den Owasp Top Ten Risks.
+- Hashen der Passwörter für Sicherheit.
+- Eine Übersichtliche Benutzeroberfläche.
 
 ## Architektur
 
