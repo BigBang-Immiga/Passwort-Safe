@@ -12,7 +12,7 @@ const port = 3000;
 const saltRound = 10;
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extenden: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
@@ -23,6 +23,7 @@ app.use(cors({
     methods : ["GET", "POST", "DELETE"],
     credentials: true,
   }))
+
 
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
@@ -40,6 +41,7 @@ pool.getConnection((err, connection) => {
     console.log('Connected to database ');
   });
 
+//LOGIN
 app.post("/login", (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -64,6 +66,7 @@ app.post("/login", (req, res) => {
     })
   });
 
+  //SIGNUP
   app.post("/signup", (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -79,6 +82,22 @@ app.post("/login", (req, res) => {
       res.json({ success: true, message: 'User created successfully' });
     })
   });
+
+//SAFE
+app.get('/Safe', (req, res) => {
+  db.query('SELECT * FROM passwords', (err, results) => {
+    if (err) throw err;
+    res.json(results);
+  });
+});
+
+app.post('/Safe', (req, res) => {
+  const { service, username, password } = req.body;
+  db.query('INSERT INTO passwords (service, username, password) VALUES (?, ?, ?)', [service, username, password], (err, result) => {
+    if (err) throw err;
+    res.json({ id: result.insertId });
+  });
+});
 
 
 
