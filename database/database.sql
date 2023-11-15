@@ -1,0 +1,4 @@
+CREATE DATABASE vault;
+USE vault;
+
+CREATE TABLE 
