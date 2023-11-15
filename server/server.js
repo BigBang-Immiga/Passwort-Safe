@@ -84,14 +84,14 @@ app.post("/login", (req, res) => {
   });
 
 //SAFE
-app.get('/Safe', (req, res) => {
+app.get('/Vault', (req, res) => {
   db.query('SELECT * FROM passwords', (err, results) => {
     if (err) throw err;
     res.json(results);
   });
 });
 
-app.post('/Safe', (req, res) => {
+app.post('/Vault', (req, res) => {
   const { service, username, password } = req.body;
   db.query('INSERT INTO passwords (service, username, password) VALUES (?, ?, ?)', [service, username, password], (err, result) => {
     if (err) throw err;
