@@ -75,16 +75,16 @@ pool.getConnection((err, connection) => {
   });
 
 //SAFE
-app.get('/Safe', (req, res) => {
-  db.query('SELECT * FROM passwords', (err, results) => {
+app.get('/Vault', (req, res) => {
+  pool.query('SELECT * FROM data', (err, results) => {
     if (err) throw err;
     res.json(results);
   });
 });
 
-app.post('/Safe', (req, res) => {
-  const { service, username, password } = req.body;
-  db.query('INSERT INTO passwords (service, username, password) VALUES (?, ?, ?)', [service, username, password], (err, result) => {
+app.post('/Vault', (req, res) => {
+  const { website, username, password, remarks } = req.body;
+  pool.query('INSERT INTO data (website, username, password, remarks) VALUES (?, ?, ?, ?)', [website, username, password, remarks], (err, result) => {
     if (err) throw err;
     res.json({ id: result.insertId });
   });

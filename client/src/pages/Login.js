@@ -18,7 +18,7 @@ function Login() {
           console.log('login successful:', response.data);
           login();
           setTimeout(() => {
-            navigate("/safe");
+            navigate("/Vault");
           }, 10)
         } catch (error) {
           console.log('login failed:', error);

@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function Safe() {
+function Vault() {
   const [passwords, setPasswords] = useState([]);
   const [newPassword, setNewPassword] = useState({ username: '', password: '' });
 
   useEffect(() => {
-    axios.get('http://localhost:3000/Safe')
+    axios.get('http://localhost:3000/Vault')
       .then(response => setPasswords(response.data))
       .catch(error => console.error(error));
   }, []);
 
   const handleAddPassword = () => {
-    axios.post('http://localhost:3000/Safe', newPassword)
+    axios.post('http://localhost:3000/Vault', newPassword)
       .then(response => {
         setNewPassword({ username: '', password: '' });
         setPasswords([...passwords, { id: response.data.id, ...newPassword }]);
@@ -42,4 +42,4 @@ function Safe() {
 }
 
 
-export default Safe;
+export default Vault;
