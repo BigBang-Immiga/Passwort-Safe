@@ -12,7 +12,7 @@ const port = 3000;
 const saltRound = 10;
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extenden: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
@@ -40,28 +40,20 @@ pool.getConnection((err, connection) => {
     console.log('Connected to database ');
   });
 
-app.post("/login", (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
-    
-    pool.execute("SELECT * FROM users WHERE username = ?;", [username],
-    (err, result) => {
+  app.post("/login", (req, res) => {
+    const { username, password } = req.body;
+
+    pool.execute("SELECT * FROM users WHERE username = ? AND password = ?", [username, password], (err, results) => {
       if (err) {
-        res.send({err: err});
+        return res.status(500).json({ success: false, message: 'Internal server error' });
       }
 
-    if (result.length > 0){
-          bcrypt.compare(password, result[0].password, (error, response) => {
-            if(response) {
-              res.send(result);
-            } else {
-                res.send({message: "Wrong username or password"});
-            }
-          })
-    } else {
-          res.send({ message: "User doesn't exists"})
-    }
-    })
+      if (results.length > 0) {
+        res.json({ success: true, message: 'Login successful' });
+      } else {
+        res.status(401).json({ success: false, message: 'Invalid username or password' });
+      }
+    });
   });
 
   app.post("/signup", (req, res) => {
