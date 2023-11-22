@@ -24,7 +24,6 @@ app.use(cors({
     credentials: true,
   }))
 
-
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -41,30 +40,36 @@ pool.getConnection((err, connection) => {
     console.log('Connected to database ');
   });
 
-//LOGIN
-app.post("/login", (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
-    
-    pool.execute("SELECT * FROM users WHERE username = ?;", [username],
-    (err, result) => {
+  app.post("/login", (req, res) => {
+    const { username, password } = req.body;
+  
+    pool.execute("SELECT username, password FROM users WHERE username = ?", [username], (err, results) => {
       if (err) {
-        res.send({err: err});
+        console.error('Error during login:', err);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
       }
+  
+      if (results.length === 0) {
+        return res.status(401).json({ success: false, message: 'Invalid username or password' });
+      }
+  
+      const user = results[0];
+  
+      bcrypt.compare(password, user.password, (err, isValid) => {
+        if (err) {
+          console.error('Error during password comparison:', err);
+          return res.status(500).json({ success: false, message: 'Internal Server Error' });
+        }
+  
+        if (!isValid) {
+          return res.status(401).json({ success: false, message: 'Invalid username or password' });
+        }
 
-    if (result.length > 0){
-          bcrypt.compare(password, result[0].password, (error, response) => {
-            if(response) {
-              res.send(result);
-            } else {
-                res.send({message: "Wrong username or password"});
-            }
-          })
-    } else {
-          res.send({ message: "User doesn't exists"})
-    }
-    })
+        res.json({ success: true, message: 'Login successful', userId: user.id });
+      });
+    });
   });
+  
 
   //SIGNUP
   app.post("/signup", (req, res) => {
@@ -83,21 +88,44 @@ app.post("/login", (req, res) => {
     })
   });
 
-//SAFE
+//Vault
 app.get('/Vault', (req, res) => {
-  db.query('SELECT * FROM passwords', (err, results) => {
+  pool.query('SELECT * FROM data', (err, results) => {
     if (err) throw err;
     res.json(results);
   });
 });
 
 app.post('/Vault', (req, res) => {
-  const { service, username, password } = req.body;
-  db.query('INSERT INTO passwords (service, username, password) VALUES (?, ?, ?)', [service, username, password], (err, result) => {
-    if (err) throw err;
+  const { website, username, password, remarks } = req.body;
+
+  if (!website) {
+    return res.status(400).json({ success: false, message: 'Website cannot be null or empty' });
+  }
+
+  pool.query('INSERT INTO data (website, username, password, remarks) VALUES (?, ?, ?, ?)', [website, username, password, remarks], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
     res.json({ id: result.insertId });
   });
 });
 
+// Edit password
+app.put('/Vault/:id', (req, res) => {
+  const id = req.params.id;
+  const { website, username, password, remarks } = req.body;
 
+  if (!website) {
+    return res.status(400).json({ success: false, message: 'Website cannot be null or empty' });
+  }
 
+  pool.query('UPDATE data SET website = ?, username = ?, password = ?, remarks = ? WHERE id = ?', [website, username, password, remarks, id], (err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+    res.json({ success: true, message: 'Password updated successfully' });
+  });
+});
