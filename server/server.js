@@ -43,19 +43,34 @@ pool.getConnection((err, connection) => {
 
   app.post("/login", (req, res) => {
     const { username, password } = req.body;
-
-    pool.execute("SELECT * FROM users WHERE username = ? AND password = ?", [username, password], (err, results) => {
+  
+    pool.execute("SELECT username, password FROM users WHERE username = ?", [username], (err, results) => {
       if (err) {
+        console.error('Error during login:', err);
         return res.status(500).json({ success: false, message: 'Internal server error' });
       }
-
-      if (results.length > 0) {
-        res.json({ success: true, message: 'Login successful' });
-      } else {
-        res.status(401).json({ success: false, message: 'Invalid username or password' });
+  
+      if (results.length === 0) {
+        return res.status(401).json({ success: false, message: 'Invalid username or password' });
       }
+  
+      const user = results[0];
+  
+      bcrypt.compare(password, user.password, (err, isValid) => {
+        if (err) {
+          console.error('Error during password comparison:', err);
+          return res.status(500).json({ success: false, message: 'Internal Server Error' });
+        }
+  
+        if (!isValid) {
+          return res.status(401).json({ success: false, message: 'Invalid username or password' });
+        }
+
+        res.json({ success: true, message: 'Login successful', userId: user.id });
+      });
     });
   });
+  
 
   //SIGNUP
   app.post("/signup", (req, res) => {
@@ -84,11 +99,20 @@ app.get('/Vault', (req, res) => {
 
 app.post('/Vault', (req, res) => {
   const { website, username, password, remarks } = req.body;
+
+  if (!website) {
+    return res.status(400).json({ success: false, message: 'Website cannot be null or empty' });
+  }
+
   pool.query('INSERT INTO data (website, username, password, remarks) VALUES (?, ?, ?, ?)', [website, username, password, remarks], (err, result) => {
-    if (err) throw err;
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
     res.json({ id: result.insertId });
   });
 });
+
 
 
 
