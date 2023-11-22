@@ -23,11 +23,13 @@ function Signup(){
 
     return(
         <div>
-            <h1>Signup</h1>
-            <div>
-            <input className="signup" type="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Enter Username"></input>
-            <input className="signup" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter Password"></input>
-            <button onClick={createUser}>Signup</button>
+            <h1 className="title">Signup</h1>
+            <div className="login-input">
+            <input className="login" type="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Enter Username"></input>
+            <input className="login" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter Password"></input>
+            <br />
+            <br />
+            <button className="login-btn" onClick={createUser}>Signup</button>
             </div>
         </div>
     )

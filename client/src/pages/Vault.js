@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './Vault.css'
 
 function Vault() {
   const [passwords, setPasswords] = useState([]);
@@ -22,20 +23,39 @@ function Vault() {
 
   return (
     <div>
+      <div className='title'>
       <h1>Password Safe</h1>
-      <ul>
-        {passwords.map(password => (
-          <li key={password.id}>
-            {password.username} - {password.password} - {password.website} - {password.remarks}
-          </li>
-        ))}
-      </ul>
-      <div>
-        <input type="text" placeholder="Username" value={newPassword.username} onChange={(e) => setNewPassword({ ...newPassword, username: e.target.value })} />
-        <input type="password" placeholder="Password" value={newPassword.password} onChange={(e) => setNewPassword({ ...newPassword, password: e.target.value })} />
-        <input type="text" placeholder="Website" value={newPassword.website} onChange={(e) => setNewPassword({ ...newPassword, website: e.target.value })} />
-        <input type="text" placeholder="Remarks" value={newPassword.remarks} onChange={(e) => setNewPassword({ ...newPassword, remarks: e.target.value })} />
-        <button onClick={handleAddPassword}>Add Password</button>
+      </div>
+      <div className='input'>
+        <input className='username' type="text" placeholder="Username" value={newPassword.username} onChange={(e) => setNewPassword({ ...newPassword, username: e.target.value })} />
+        <input className='password' type="password" placeholder="Password" value={newPassword.password} onChange={(e) => setNewPassword({ ...newPassword, password: e.target.value })} />
+        <input className='website' type="text" placeholder="Website" value={newPassword.website} onChange={(e) => setNewPassword({ ...newPassword, website: e.target.value })} />
+        <input className='remarks' type="text" placeholder="Remarks" value={newPassword.remarks} onChange={(e) => setNewPassword({ ...newPassword, remarks: e.target.value })} />
+        <button onClick={handleAddPassword}>--Add--</button>
+      </div>
+      <div className='secret'>
+        <div className='table-container'>
+          <table className='secret-table'>
+            <thead>
+              <tr className='title-row'>
+                <th>Username</th>
+                <th>Password</th>
+                <th>Website</th>
+                <th>Remarks</th>
+              </tr>
+            </thead>
+            <tbody>
+              {passwords.map(password => (
+                <tr key={password.id}>
+                  <td>{password.username}</td>
+                  <td>{password.password}</td>
+                  <td>{password.website}</td>
+                  <td>{password.remarks}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
