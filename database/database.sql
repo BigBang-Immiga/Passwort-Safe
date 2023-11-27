@@ -2,10 +2,28 @@ CREATE DATABASE vault;
 USE vault;
 
 CREATE TABLE users (
-    id integer PRIMARY KEY AUTO_INCREMENT,
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     created TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE vaults (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    user_id INTEGER NOT NULL,
+    vault_name VARCHAR(255) NOT NULL,
+    created TIMESTAMP NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE data (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    vault_id INTEGER NOT NULL,
+    website VARCHAR(255) NOT NULL,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    remarks VARCHAR(255) NOT NULL,
+    FOREIGN KEY (vault_id) REFERENCES vaults(id)
 );
 
 INSERT INTO users (username, password)
@@ -13,14 +31,11 @@ VALUES
 ('bob', '1234'),
 ('john', '1122');
 
-CREATE TABLE data (
-    id integer PRIMARY KEY AUTO_INCREMENT,
-    website VARCHAR(255) NOT NULL,
-    username VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    remarks VARCHAR(255) NOT NULL
-);
-
-INSERT INTO data (website, username, password, remarks )
+INSERT INTO vaults (user_id, vault_name)
 VALUES
-('www.digitec.com', 'bob', '1234', 'very good website');
+(1, 'Bob\'s Vault'),
+(2, 'John\'s Vault');
+
+INSERT INTO data (vault_id, website, username, password, remarks)
+VALUES
+(1, 'www.digitec.com', 'bob', '1234', 'very good website');

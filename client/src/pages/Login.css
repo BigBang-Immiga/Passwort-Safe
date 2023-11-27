@@ -7,7 +7,6 @@ body {
 
 .login-column,
 .signup-column {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   border-radius: 8px;
   margin: 10px;
@@ -23,11 +22,11 @@ body {
 
 .login-input {
   margin-bottom: 20px;
-  text-align: center; /* Center the login inputs */
+  text-align: center; 
 }
 
 .login {
-  width: 60%; /* Set a smaller width for the login inputs */
+  width: 60%; 
   padding: 10px;
   margin-bottom: 10px;
   border: 1px solid #ccc;

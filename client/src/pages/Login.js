@@ -22,11 +22,11 @@ function Login() {
           setShowErrorPopup(true);
           return;
         }
-        const response = await axios.post('http://localhost:3000/login', { username, password });
+        const response = await axios.post('http://localhost:3001/login', { username, password });
         console.log('login successful:', response.data);
         login();
         setTimeout(() => {
-          navigate("/vault");
+          navigate("/home");
         }, 10)
       } catch (error) {
         console.log('login failed:', error);

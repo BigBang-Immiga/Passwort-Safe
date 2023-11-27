@@ -7,13 +7,13 @@ function Vault() {
   const [newPassword, setNewPassword] = useState({ username: '', password: '' });
 
   useEffect(() => {
-    axios.get('http://localhost:3000/Vault')
+    axios.get('http://localhost:3001/Vault')
       .then(response => setPasswords(response.data))
       .catch(error => console.error(error));
   }, []);
 
-  const handleAddPassword = () => {
-    axios.post('http://localhost:3000/Vault', newPassword)
+  const addPassword = () => {
+    axios.post('http://localhost:3001/Vault', newPassword)
       .then(response => {
         setNewPassword({ username: '', password: '' });
         setPasswords([...passwords, { id: response.data.id, ...newPassword }]);
@@ -31,7 +31,7 @@ function Vault() {
         <input className='password' type="password" placeholder="Password" value={newPassword.password} onChange={(e) => setNewPassword({ ...newPassword, password: e.target.value })} />
         <input className='website' type="text" placeholder="Website" value={newPassword.website} onChange={(e) => setNewPassword({ ...newPassword, website: e.target.value })} />
         <input className='remarks' type="text" placeholder="Remarks" value={newPassword.remarks} onChange={(e) => setNewPassword({ ...newPassword, remarks: e.target.value })} />
-        <button onClick={handleAddPassword}>--Add--</button>
+        <button onClick={addPassword}>--Add--</button>
       </div>
       <div className='secret'>
         <div className='table-container'>

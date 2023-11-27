@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt');
 
 dotenv.config();
 
-const port = 3000;
+const port = 3001;
 const saltRound = 10;
 
 app.use(bodyParser.json());
@@ -19,7 +19,7 @@ app.listen(port, () => {
   });
 
 app.use(cors({
-    origin : ["http://localhost:3001"],
+    origin : ["http://localhost:3000"],
     methods : ["GET", "POST", "DELETE"],
     credentials: true,
   }))
