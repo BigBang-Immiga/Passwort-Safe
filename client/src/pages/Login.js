@@ -18,7 +18,7 @@ function Login() {
     const handlelogin = async () => {
       try {
         if (!username || !password){
-          setError('Please fil in all fieds')
+          setError('Please fill in all fields')
           setShowErrorPopup(true);
           return;
         }
@@ -30,7 +30,7 @@ function Login() {
         }, 10)
       } catch (error) {
         console.log('login failed:', error);
-        setError('login failed');
+        setError('Login failed');
         setShowErrorPopup(true);
       }
     }
@@ -49,8 +49,22 @@ function Login() {
                 Log in
             </div>
             <div className="login-input">
-            <input className="login" type="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Enter Username"></input>
-            <input className="login" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter Password"></input>
+            <input
+              className="login"
+              type="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handlelogin()}
+              placeholder="Enter Username"
+            />
+            <input
+              className="login"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handlelogin()}
+              placeholder="Enter Password"
+            />
             </div>
             <div className="login-btn-container">
                 <button onClick={handlelogin} className="login-btn">
