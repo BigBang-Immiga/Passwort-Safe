@@ -159,11 +159,7 @@ app.post('/Vault', authenticateToken, (req, res) => {
   });
 });
 
-// JWT TOKEN GENERATOR
-function generateAccessToken(userID, username) {
-  const payload = { userID, username };
-  return jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
-}
+
 
 
 
