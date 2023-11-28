@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require("cors");
 const dotenv = require('dotenv');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken')
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ const port = 3001;
 const saltRound = 10;
 
 app.use(bodyParser.json());
+app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.listen(port, () => {
@@ -32,6 +34,11 @@ const pool = mysql.createPool({
     database: process.env.DB_DATABASE,
     connectionLimit: parseInt(process.env.DB_CONNECTION_LIMIT)
   })
+
+const createToken = (userId, username) => {
+    const payload = { userId, username };
+    return jwt.sign(payload, process.env.JWTTOKEN, { expiresIn: '600s' });
+   };
 
 pool.getConnection((err, connection) => {
     if (err) {
@@ -67,6 +74,7 @@ pool.getConnection((err, connection) => {
         }
 
         res.json({ success: true, message: 'Login successful', userId: user.id });
+        //jwtoken
       });
     });
   });
@@ -90,6 +98,20 @@ pool.getConnection((err, connection) => {
   });
 
 //SAFE
+app.post('/create-vault', (req, res) => {
+  const vaultname = req.body.vaultname;
+  const user_id = req.body.user_id;
+
+  pool.execute('INSERT INTO vaults (user_id, vaultname) VAULES (?,?)', [user_id, vaultname], (insertErr, result) => {
+    if (insertErr) {
+      console.log('Error creating vault:', insertErr);
+      res.status(500).json({ success: false, message: 'Internal Server Error'});
+      return;
+    }
+    console.log('Vault created successfully')
+  })
+})
+
 app.get('/Vault', (req, res) => {
   pool.query('SELECT * FROM data', (err, results) => {
     if (err) throw err;
@@ -104,7 +126,7 @@ app.post('/Vault', (req, res) => {
     return res.status(400).json({ success: false, message: 'Website cannot be null or empty' });
   }
 
-  pool.query('INSERT INTO data (website, username, password, remarks) VALUES (?, ?, ?, ?)', [website, username, password, remarks], (err, result) => {
+  pool.query('INSERT INTO data (vault_id, website, username, password, remarks) VALUES (?, ?, ?, ?, ?)', [vault_id, website, username, password, remarks], (err, result) => {
     if (err) {
       console.error(err);
       return res.status(500).json({ success: false, message: 'Internal server error' });
