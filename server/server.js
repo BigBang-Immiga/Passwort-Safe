@@ -73,8 +73,8 @@ pool.getConnection((err, connection) => {
           return res.status(401).json({ success: false, message: 'Invalid username or password' });
         }
 
-        res.json({ success: true, message: 'Login successful', userId: user.id });
-        //jwtoken
+        const token = createToken(user.id, user.username);
+        res.json({ success: true, message: 'Login successful', userId: user.id, token });
       });
     });
   });
@@ -93,7 +93,9 @@ pool.getConnection((err, connection) => {
       (err, result) => {
         console.log(err);
       })
-      res.json({ success: true, message: 'User created successfully' });
+      const userId = result.insertId;
+      const token = generateAccessToken(userId, username);
+      res.json({ success: true, message: 'User created successfully', userId, token });
     })
   });
 
@@ -137,4 +139,10 @@ app.post('/Vault', (req, res) => {
 
 
 
+//JWT TOKEN GENERATOR
+
+function generateAccessToken(userID, username) {
+  const payload = { userID, username };
+  return jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
+}
 
