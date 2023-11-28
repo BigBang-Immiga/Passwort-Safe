@@ -1,13 +1,25 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Vault.css";
+import Header from "../components/Header";
+import { useNavigate } from "react-router-dom";
 
 function Vault() {
+  const navigate = useNavigate();
   const [passwords, setPasswords] = useState([]);
   const [newPassword, setNewPassword] = useState({
     username: "",
     password: "",
   });
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("jwtToken");
+    if (!token) {
+      navigate("/login");
+    } else {
+      getData();
+    }
+  }, [navigate]);
 
   const getData = () => {
     axios
@@ -47,6 +59,7 @@ function Vault() {
 
   return (
     <div>
+      <Header />
       <div className="title">
         <h1>Password Safe</h1>
       </div>
@@ -104,7 +117,7 @@ function Vault() {
               {passwords.map((password) => (
                 <tr key={password.id}>
                   <td>{password.username}</td>
-                  <td>{password.password}</td>
+                  <td>{'*'.repeat(password.password.length)}</td>
                   <td>{password.website}</td>
                   <td>{password.remarks}</td>
                 </tr>
