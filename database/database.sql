@@ -22,7 +22,3 @@ INSERT INTO users (username, password)
 VALUES 
 ('bob', '1234'),
 ('john', '1122');
-
-INSERT INTO data ( user_id, website, username, password, remarks)
-VALUES
-(1, 'www.digitec.com', 'bob', '1234', 'very good website');
