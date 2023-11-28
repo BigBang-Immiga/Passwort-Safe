@@ -9,6 +9,8 @@ function Vault() {
 
   const getUser = () => {
     axios.get('http://localhost:3001/get-user')
+
+    //TODO get user_id
   }
 
   useEffect(() => {
@@ -25,7 +27,7 @@ function Vault() {
         Authorization: `Bearer ${token}`,
       },
     })
-      .then(response => {
+      .then(response => { //TODO: send user_id to the database (data)
         setNewPassword({ username: '', password: '', website: '', remarks: '' });
         setPasswords([...passwords, { id: response.data.id, ...newPassword }]);
       })

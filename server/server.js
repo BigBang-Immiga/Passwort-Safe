@@ -137,7 +137,7 @@ app.get('/get-vault', authenticateToken, (req, res) => {
 
 // ...
 app.post('/post-vault', authenticateToken, (req, res) => {
-  const { website, username, password, remarks } = req.body;
+  const { user_id, website, username, password, remarks } = req.body;
 
   if (!website) {
       return res.status(400).json({ success: false, message: 'Website cannot be null or empty' });
