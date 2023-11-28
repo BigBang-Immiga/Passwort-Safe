@@ -74,7 +74,7 @@ pool.getConnection((err, connection) => {
 app.post("/login", (req, res) => {
     const { username, password } = req.body;
 
-    pool.execute("SELECT username, password FROM users WHERE username = ?", [username], (err, results) => {
+    pool.execute("SELECT id, username, password FROM users WHERE username = ?", [username], (err, results) => {
         if (err) {
             console.error('Error during login:', err);
             return res.status(500).json({ success: false, message: 'Internal server error' });
@@ -135,22 +135,24 @@ app.get('/get-vault', authenticateToken, (req, res) => {
     });
 });
 
-// ...
+
 app.post('/post-vault', authenticateToken, (req, res) => {
   const { website, username, password, remarks } = req.body;
+  const userId = req.user.userId; // Extract user ID from the authenticated token
 
   if (!website) {
-      return res.status(400).json({ success: false, message: 'Website cannot be null or empty' });
+    return res.status(400).json({ success: false, message: 'Website cannot be null or empty' });
   }
 
-  pool.query('INSERT INTO data (user_id, website, username, password, remarks) VALUES (?, ?, ?, ?, ?)', [website, username, password, remarks], (err, result) => {
-      if (err) {
-          console.error(err);
-          return res.status(500).json({ success: false, message: 'Internal server error' });
-      }
-      res.json({ id: result.insertId });
+  pool.query('INSERT INTO data (user_id, website, username, password, remarks) VALUES (?, ?, ?, ?, ?)', [userId, website, username, password, remarks], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+    res.json({ id: result.insertId });
   });
 });
+
 
 
 
