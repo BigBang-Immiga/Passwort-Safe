@@ -1,6 +1,6 @@
 # Passwort-Safe App
 
-This is a Password Safe application developed using Java, Spring Boot, and React.
+This is a Password Safe application developed using React, Node.js with express and MySQL.
 
 ## Table of Contents
 
