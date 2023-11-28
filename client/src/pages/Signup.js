@@ -13,7 +13,7 @@ function Signup() {
       const response = await axios.post('http://localhost:3001/signup', { username, password });
       console.log('user created successfully:', response.data);
       setTimeout(() => {
-        navigate("/vault");
+        navigate("/login");
       }, 10);
     } catch (error) {
       console.log('user creation failed:', error);
