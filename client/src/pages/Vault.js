@@ -13,9 +13,20 @@ function Vault() {
   }, []);
 
   const addPassword = () => {
-    axios.post('http://localhost:3001/Vault', newPassword)
+    const token = sessionStorage.getItem('jwtToken'); 
+
+    if (!token) {
+      console.error('Token not available');
+      return;
+    }
+  
+    axios.post('http://localhost:3001/Vault', newPassword, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then(response => {
-        setNewPassword({ username: '', password: '' });
+        setNewPassword({ username: '', password: '', website: '', remarks: '' });
         setPasswords([...passwords, { id: response.data.id, ...newPassword }]);
       })
       .catch(error => console.error(error));

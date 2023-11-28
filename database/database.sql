@@ -8,22 +8,14 @@ CREATE TABLE users (
     created TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE vaults (
-    id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    user_id INTEGER NOT NULL,
-    vault_name VARCHAR(255) NOT NULL,
-    created TIMESTAMP NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (user_id) REFERENCES users(id)
-);
-
 CREATE TABLE data (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    vault_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
     website VARCHAR(255) NOT NULL,
     username VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     remarks VARCHAR(255) NOT NULL,
-    FOREIGN KEY (vault_id) REFERENCES vaults(id)
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 INSERT INTO users (username, password)
