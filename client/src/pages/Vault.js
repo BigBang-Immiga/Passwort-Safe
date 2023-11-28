@@ -11,6 +11,7 @@ function Vault() {
     username: "",
     password: "",
   });
+  
 
   useEffect(() => {
     const token = sessionStorage.getItem("jwtToken");
