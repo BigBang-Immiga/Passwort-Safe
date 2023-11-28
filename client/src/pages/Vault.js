@@ -5,22 +5,23 @@ import './Vault.css'
 function Vault() {
   const [passwords, setPasswords] = useState([]);
   const [newPassword, setNewPassword] = useState({ username: '', password: '' });
-  const [userId, setUserId] = useState(null);
 
-  const getUser = () => {
-    axios.get('http://localhost:3001/get-user')
-
-    //TODO get user_id
+  const getData = () => {
+    axios.get('http://localhost:3001/get-vault', {
+      headers: {
+        Authorization: "Bearer " + sessionStorage.getItem("jwtToken")
+      }
+    })
+      .then(response => setPasswords(response.data))
+      .catch(error => console.error(error));
   }
 
   useEffect(() => {
-    axios.get('http://localhost:3001/get-vault')
-      .then(response => setPasswords(response.data))
-      .catch(error => console.error(error));
+    getData()
   }, []);
 
   const addPassword = () => {
-    const token = sessionStorage.getItem('jwtToken'); 
+    const token = sessionStorage.getItem('jwtToken');
     
     axios.post('http://localhost:3001/post-vault', newPassword, {
       headers: {
@@ -29,10 +30,11 @@ function Vault() {
     })
       .then(response => { //TODO: send user_id to the database (data)
         setNewPassword({ username: '', password: '', website: '', remarks: '' });
-        setPasswords([...passwords, { id: response.data.id, ...newPassword }]);
+        getData()
       })
       .catch(error => console.error(error));
   };
+  
 
   return (
     <div>
