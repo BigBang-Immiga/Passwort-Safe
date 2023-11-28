@@ -16,6 +16,9 @@ function Home () {
             return;
           }
           const response = await axios.post('http://localhost:3001/create-vault', { vaultname });
+
+          const sessionToken = response.data.token;
+          sessionStorage.setItem('sessionToken', sessionToken);
           console.log('vault created successful:', response.data);
         } catch (error) {
           console.log('vault creation failed:', error);
@@ -23,6 +26,7 @@ function Home () {
           setShowErrorPopup(true);
         }
       }
+
 
     return(
         <div>
