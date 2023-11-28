@@ -5,22 +5,22 @@ import './Vault.css'
 function Vault() {
   const [passwords, setPasswords] = useState([]);
   const [newPassword, setNewPassword] = useState({ username: '', password: '' });
+  const [userId, setUserId] = useState(null);
+
+  const getUser = () => {
+    axios.get('http://localhost:3001/get-user')
+  }
 
   useEffect(() => {
-    axios.get('http://localhost:3001/Vault')
+    axios.get('http://localhost:3001/get-vault')
       .then(response => setPasswords(response.data))
       .catch(error => console.error(error));
   }, []);
 
   const addPassword = () => {
     const token = sessionStorage.getItem('jwtToken'); 
-
-    if (!token) {
-      console.error('Token not available');
-      return;
-    }
-  
-    axios.post('http://localhost:3001/Vault', newPassword, {
+    
+    axios.post('http://localhost:3001/post-vault', newPassword, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

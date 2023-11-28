@@ -23,11 +23,6 @@ VALUES
 ('bob', '1234'),
 ('john', '1122');
 
-INSERT INTO vaults (user_id, vault_name)
+INSERT INTO data ( user_id, website, username, password, remarks)
 VALUES
-(1, 'Bob\'s Vault'),
-(2, 'John\'s Vault');
-
-INSERT INTO data (vault_id, website, username, password, remarks)
-VALUES
-(1, 'www.digitec.com', 'bob', '1234', 'very good website');
+('www.digitec.com', 'bob', '1234', 'very good website');
