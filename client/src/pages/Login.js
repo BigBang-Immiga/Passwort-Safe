@@ -23,10 +23,14 @@ function Login() {
           return;
         }
         const response = await axios.post('http://localhost:3001/login', { username, password });
+
+        const token = response.data.token;
+        sessionStorage.setItem('jwtToken', token);
+
         console.log('login successful:', response.data);
         login();
         setTimeout(() => {
-          navigate("/home");
+          navigate("/vault");
         }, 10)
       } catch (error) {
         console.log('login failed:', error);

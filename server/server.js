@@ -120,20 +120,7 @@ app.post("/signup", (req, res) => {
     });
 });
 
-// SAFE
-app.post('/create-vault', authenticateToken, (req, res) => {
-  const vaultname = req.body.vaultname;
-  const user_id = req.body.user_id;
-
-  pool.execute('INSERT INTO vaults (user_id, vaultname) VALUES (?,?)', [user_id, vaultname], (insertErr, result) => {
-      if (insertErr) {
-          console.log('Error creating vault:', insertErr);
-          res.status(500).json({ success: false, message: 'Internal Server Error' });
-          return;
-      }
-      console.log('Vault created successfully');
-  });
-});
+// SAFe
 
 app.get('/Vault', authenticateToken, (req, res) => {
     pool.query('SELECT * FROM data', (err, results) => {
@@ -158,12 +145,6 @@ app.post('/Vault', authenticateToken, (req, res) => {
       res.json({ id: result.insertId });
   });
 });
-
-// JWT TOKEN GENERATOR
-function generateAccessToken(userID, username) {
-  const payload = { userID, username };
-  return jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
-}
 
 
 

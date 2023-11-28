@@ -13,9 +13,20 @@ function Vault() {
   }, []);
 
   const addPassword = () => {
-    axios.post('http://localhost:3001/Vault', newPassword)
+    const token = sessionStorage.getItem('jwtToken'); 
+
+    if (!token) {
+      console.error('Token not available');
+      return;
+    }
+  
+    axios.post('http://localhost:3001/Vault', newPassword, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then(response => {
-        setNewPassword({ username: '', password: '' });
+        setNewPassword({ username: '', password: '', website: '', remarks: '' });
         setPasswords([...passwords, { id: response.data.id, ...newPassword }]);
       })
       .catch(error => console.error(error));
@@ -31,7 +42,7 @@ function Vault() {
         <input className='password' type="password" placeholder="Password" value={newPassword.password} onChange={(e) => setNewPassword({ ...newPassword, password: e.target.value })} />
         <input className='website' type="text" placeholder="Website" value={newPassword.website} onChange={(e) => setNewPassword({ ...newPassword, website: e.target.value })} />
         <input className='remarks' type="text" placeholder="Remarks" value={newPassword.remarks} onChange={(e) => setNewPassword({ ...newPassword, remarks: e.target.value })} />
-        <button onClick={addPassword}>--Add--</button>
+        <button onClick={addPassword}>Add</button>
       </div>
       <div className='secret'>
         <div className='table-container'>
