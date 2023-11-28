@@ -28,6 +28,7 @@ function Login() {
         sessionStorage.setItem('jwtToken', token);
 
         console.log('login successful:', response.data);
+        console.log(sessionStorage.getItem('jwtToken'))
         login();
         setTimeout(() => {
           navigate("/vault");

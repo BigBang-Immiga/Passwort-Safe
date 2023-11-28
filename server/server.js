@@ -36,26 +36,32 @@ const pool = mysql.createPool({
 
 const createToken = (userId, username) => {
   const payload = { userId, username };
-  return jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: '600s' });
+  return jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: '3600s' });
 };
 
 //authenticate token
 function authenticateToken(req, res, next) {
-    const token = req.headers['authorization'];
+  const tokenHeader = req.headers['authorization'];
+  if (!tokenHeader) {
+      return res.status(401).json({ success: false, message: 'Unauthorized: Token missing' });
+  }
 
-    if (!token) {
-        return res.status(401).json({ success: false, message: 'Unauthorized: Token missing' });
-    }
+  const [bearer, token] = tokenHeader.split(' ');
+  if (bearer !== 'Bearer' || !token) {
+      return res.status(401).json({ success: false, message: 'Unauthorized: Invalid token format' });
+  }
 
-    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
-        if (err) {
-            return res.status(403).json({ success: false, message: 'Forbidden: Invalid token' });
-        }
+  jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+      if (err) {
+          console.log(err);
+          return res.status(403).json({ success: false, message: 'Forbidden: Invalid token' });
+      }
 
-        req.user = user;
-        next();
-    });
+      req.user = user;
+      next();
+  });
 }
+
 
 pool.getConnection((err, connection) => {
     if (err) {
@@ -122,7 +128,7 @@ app.post("/signup", (req, res) => {
 
 // SAFe
 
-app.get('/Vault', authenticateToken, (req, res) => {
+app.get('/get-vault', authenticateToken, (req, res) => {
     pool.query('SELECT * FROM data', (err, results) => {
         if (err) throw err;
         res.json(results);
@@ -130,14 +136,14 @@ app.get('/Vault', authenticateToken, (req, res) => {
 });
 
 // ...
-app.post('/Vault', authenticateToken, (req, res) => {
+app.post('/post-vault', authenticateToken, (req, res) => {
   const { website, username, password, remarks } = req.body;
 
   if (!website) {
       return res.status(400).json({ success: false, message: 'Website cannot be null or empty' });
   }
 
-  pool.query('INSERT INTO data (vault_id, website, username, password, remarks) VALUES (?, ?, ?, ?, ?)', [vault_id, website, username, password, remarks], (err, result) => {
+  pool.query('INSERT INTO data (user_id, website, username, password, remarks) VALUES (?, ?, ?, ?, ?)', [website, username, password, remarks], (err, result) => {
       if (err) {
           console.error(err);
           return res.status(500).json({ success: false, message: 'Internal server error' });
