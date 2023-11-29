@@ -3,6 +3,9 @@ import axios from "axios";
 import "./Vault.css";
 import Header from "../components/Header";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
+
 
 function Vault() {
   const navigate = useNavigate();
@@ -10,10 +13,9 @@ function Vault() {
   const [newPassword, setNewPassword] = useState({
     username: "",
     password: "",
-    website: "",
-    remarks: "",
   });
-  const [hoveredPasswordId, setHoveredPasswordId] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     const token = sessionStorage.getItem("jwtToken");
@@ -60,12 +62,35 @@ function Vault() {
       .catch((error) => console.error(error));
   };
 
-  const handleMouseEnter = (passwordId) => {
-    setHoveredPasswordId(passwordId);
+  const toggleShowPassword = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
-  const handleMouseLeave = () => {
-    setHoveredPasswordId(null);
+  const editInput = (id) => {
+    const passwordToEdit = passwords.find((password) => password.id === id);
+    if (passwordToEdit) {
+      setNewPassword({
+        username: passwordToEdit.username,
+        password: passwordToEdit.password,
+        website: passwordToEdit.website,
+        remarks: passwordToEdit.remarks,
+      });
+    }
+  };
+
+  const deleteInput = (id) => {
+    const token = sessionStorage.getItem("jwtToken");
+
+    axios
+      .delete(`http://localhost:3001/delete-input/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(() => {
+        getData();
+      })
+      .catch((error) => console.error(error));
   };
 
   return (
@@ -75,8 +100,43 @@ function Vault() {
         <h1>Password Safe</h1>
       </div>
       <div className="input">
-        {/* ... (existing code) */}
-        <button onClick={addPassword}>Add</button>
+        <input
+          className="username"
+          type="text"
+          placeholder="Username"
+          value={newPassword.username}
+          onChange={(e) =>
+            setNewPassword({ ...newPassword, username: e.target.value })
+          }
+        />
+        <input
+          className="password"
+          type="password"
+          placeholder="Password"
+          value={newPassword.password}
+          onChange={(e) =>
+            setNewPassword({ ...newPassword, password: e.target.value })
+          }
+        />
+        <input
+          className="website"
+          type="text"
+          placeholder="Website"
+          value={newPassword.website}
+          onChange={(e) =>
+            setNewPassword({ ...newPassword, website: e.target.value })
+          }
+        />
+        <input
+          className="remarks"
+          type="text"
+          placeholder="Remarks"
+          value={newPassword.remarks}
+          onChange={(e) =>
+            setNewPassword({ ...newPassword, remarks: e.target.value })
+          }
+        />
+        <button onClick={addPassword}>{editMode ? "Save" : "Add"}</button>
       </div>
       <div className="secret">
         <div className="table-container">
@@ -84,26 +144,38 @@ function Vault() {
             <thead>
               <tr className="title-row">
                 <th>Username</th>
-                <th>Password</th>
+                <th className="password">Password
+                  <FontAwesomeIcon
+                          className="eye"
+                          icon={faEye}
+                          onClick={() => toggleShowPassword()}
+                          style={{ cursor: "pointer" }}
+                        /></th>
                 <th>Website</th>
                 <th>Remarks</th>
+                <th>Edit & Delete</th>
               </tr>
             </thead>
             <tbody>
               {passwords.map((password) => (
-                <tr
-                  key={password.id}
-                  onMouseEnter={() => handleMouseEnter(password.id)}
-                  onMouseLeave={handleMouseLeave}
-                >
+                <tr key={password.id}>
                   <td>{password.username}</td>
                   <td>
-                    {hoveredPasswordId === password.id
-                      ? password.password
-                      : '*'.repeat(password.password.length)}
+                    {showPassword ? (
+                      password.password
+                    ) : (
+                      <>
+                        {'*'.repeat(password.password.length)}{' '}
+                        
+                      </>
+                    )}
                   </td>
                   <td>{password.website}</td>
                   <td>{password.remarks}</td>
+                  <td className="btn-column">
+                    <button onClick={() => editInput(password.id)}>Edit</button>
+                    <button onClick={() => deleteInput(password.id)}>Delete</button>
+                    </td>
                 </tr>
               ))}
             </tbody>
@@ -115,3 +187,4 @@ function Vault() {
 }
 
 export default Vault;
+
