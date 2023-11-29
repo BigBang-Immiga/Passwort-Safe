@@ -183,7 +183,7 @@ app.get("/get-vault", authenticateToken, (req, res) => {
 
 app.post("/post-vault", authenticateToken, (req, res) => {
   const { website, username, password, remarks } = req.body;
-  const userId = req.user.userId; // Extract user ID from the authenticated token
+  const userId = req.user.userId; 
 
   if (!website) {
     return res
@@ -205,6 +205,46 @@ app.post("/post-vault", authenticateToken, (req, res) => {
     }
   );
 });
+
+app.delete("/delete-input/:id", authenticateToken, (req, res) => {
+  const userId = req.user.userId;
+  const inputId = req.params.id;
+
+  pool.query(
+    "SELECT user_id FROM data WHERE id = ?",
+    [inputId],
+    (selectErr, selectResult) => {
+      if (selectErr) {
+        console.error(selectErr);
+        return res
+          .status(500)
+          .json({ success: false, message: "Internal server error" });
+      }
+
+      if (selectResult.length === 0 || selectResult[0].user_id !== userId) {
+        return res
+          .status(403)
+          .json({ success: false, message: "Forbidden: You don't have permission to delete this entry" });
+      }
+
+      pool.query(
+        "DELETE FROM data WHERE id = ?",
+        [inputId],
+        (deleteErr, deleteResult) => {
+          if (deleteErr) {
+            console.error(deleteErr);
+            return res
+              .status(500)
+              .json({ success: false, message: "Internal server error" });
+          }
+
+          res.json({ success: true, message: "Entry deleted successfully" });
+        }
+      );
+    }
+  );
+});
+
 
 const crypto = require("crypto");
 const algorithm = "aes-256-cbc";

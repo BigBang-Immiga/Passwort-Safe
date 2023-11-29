@@ -11,6 +11,9 @@ function Vault() {
     username: "",
     password: "",
   });
+
+  const [editMode, setEditMode] = useState(false);
+  const [editedPasswordId, setEditedPasswordId] = useState(null);
   
 
   useEffect(() => {
@@ -53,6 +56,36 @@ function Vault() {
           website: "",
           remarks: "",
         });
+        getData();
+      })
+      .catch((error) => console.error(error));
+  };
+
+  const editInput = (id) => {
+    const passwordToEdit = passwords.find((password) => password.id === id);
+    if (passwordToEdit) {
+      
+      setNewPassword({
+        username: passwordToEdit.username,
+        password: passwordToEdit.password,
+        website: passwordToEdit.website,
+        remarks: passwordToEdit.remarks,
+      });
+      setEditMode(true);
+      setEditedPasswordId(id);
+    }
+  };
+
+  const deleteInput = (id) => {
+    const token = sessionStorage.getItem("jwtToken");
+
+    axios
+      .delete(`http://localhost:3001/delete-input/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(() => {
         getData();
       })
       .catch((error) => console.error(error));
@@ -101,7 +134,7 @@ function Vault() {
             setNewPassword({ ...newPassword, remarks: e.target.value })
           }
         />
-        <button onClick={addPassword}>Add</button>
+        <button onClick={addPassword}>{editMode ? "Save" : "Add"}</button>
       </div>
       <div className="secret">
         <div className="table-container">
@@ -112,6 +145,7 @@ function Vault() {
                 <th>Password</th>
                 <th>Website</th>
                 <th>Remarks</th>
+                <th>Edit & Delete</th>
               </tr>
             </thead>
             <tbody>
@@ -121,6 +155,10 @@ function Vault() {
                   <td>{'*'.repeat(password.password.length)}</td>
                   <td>{password.website}</td>
                   <td>{password.remarks}</td>
+                  <td className="btn-column">
+                  <button onClick={() => editInput(password.id)}>Edit</button>
+                  <button onClick={() => deleteInput(password.id)}>Delete</button>
+                  </td>
                 </tr>
               ))}
             </tbody>
