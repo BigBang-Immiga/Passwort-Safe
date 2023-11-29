@@ -10,8 +10,10 @@ function Vault() {
   const [newPassword, setNewPassword] = useState({
     username: "",
     password: "",
+    website: "",
+    remarks: "",
   });
-  
+  const [hoveredPasswordId, setHoveredPasswordId] = useState(null);
 
   useEffect(() => {
     const token = sessionStorage.getItem("jwtToken");
@@ -58,6 +60,14 @@ function Vault() {
       .catch((error) => console.error(error));
   };
 
+  const handleMouseEnter = (passwordId) => {
+    setHoveredPasswordId(passwordId);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredPasswordId(null);
+  };
+
   return (
     <div>
       <Header />
@@ -65,42 +75,7 @@ function Vault() {
         <h1>Password Safe</h1>
       </div>
       <div className="input">
-        <input
-          className="username"
-          type="text"
-          placeholder="Username"
-          value={newPassword.username}
-          onChange={(e) =>
-            setNewPassword({ ...newPassword, username: e.target.value })
-          }
-        />
-        <input
-          className="password"
-          type="password"
-          placeholder="Password"
-          value={newPassword.password}
-          onChange={(e) =>
-            setNewPassword({ ...newPassword, password: e.target.value })
-          }
-        />
-        <input
-          className="website"
-          type="text"
-          placeholder="Website"
-          value={newPassword.website}
-          onChange={(e) =>
-            setNewPassword({ ...newPassword, website: e.target.value })
-          }
-        />
-        <input
-          className="remarks"
-          type="text"
-          placeholder="Remarks"
-          value={newPassword.remarks}
-          onChange={(e) =>
-            setNewPassword({ ...newPassword, remarks: e.target.value })
-          }
-        />
+        {/* ... (existing code) */}
         <button onClick={addPassword}>Add</button>
       </div>
       <div className="secret">
@@ -116,9 +91,17 @@ function Vault() {
             </thead>
             <tbody>
               {passwords.map((password) => (
-                <tr key={password.id}>
+                <tr
+                  key={password.id}
+                  onMouseEnter={() => handleMouseEnter(password.id)}
+                  onMouseLeave={handleMouseLeave}
+                >
                   <td>{password.username}</td>
-                  <td>{'*'.repeat(password.password.length)}</td>
+                  <td>
+                    {hoveredPasswordId === password.id
+                      ? password.password
+                      : '*'.repeat(password.password.length)}
+                  </td>
                   <td>{password.website}</td>
                   <td>{password.remarks}</td>
                 </tr>
