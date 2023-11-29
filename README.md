@@ -10,6 +10,7 @@ This is a Password Safe application developed using React, Node.js with Express,
 - [Getting Started](#getting-started)
 - [Usage](#usage)
 - [Technologies Used](#technologies-used)
+- [Contributors](#contributors)
 
 ## Introduction
 
@@ -61,4 +62,9 @@ To run the Password Safe application locally, follow these steps:
 - bcrypt
 - JSON Web Tokens (JWT)
 - Crypto (for encryption)
+
+  ## Contributors
+
+  - Sujan Saravana
+  - Yannick Schläpfer
 
